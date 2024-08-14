@@ -1,0 +1,64 @@
+﻿@model IEnumerable<TradeTrack2.Models.ProductViewModel>
+
+<h1>Products</h1>
+
+<a class="btn" href="@Url.Action("Create", "Product")">Добавить</a>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Название
+            </th>
+            <th>
+                Описание
+            </th>
+            <th>
+                Стоимость
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @item.Name
+                </td>
+                <td>
+                    @item.Description
+                </td>
+                <td>
+                    @item.UnitPrice
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn">Изменить</a>
+                    <button class="btn btn-danger" onclick="showDeleteModal(@item.Id)">Удалить</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <script>
+        var deleteProductId = 0;
+
+        function showDeleteModal(id) {
+            deleteProductId = id;
+            $('#deleteModal').modal('show');
+        }
+
+        $('#confirmDeleteBtn').click(function () {
+            $.post('@Url.Action("DeleteConfirmed", "Product")', { id: deleteProductId }, function (response) {
+                if (response.success) {
+                    location.reload();
+                } else {
+                    $('#deleteModal').modal('hide');
+                    $('#errorModalBody').text(response.errorMessage);
+                    $('#errorModal').modal('show');
+                }
+            });
+        });
+    </script>
+}

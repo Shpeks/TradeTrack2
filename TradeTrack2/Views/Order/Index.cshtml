@@ -1,0 +1,63 @@
+﻿@model IEnumerable<TradeTrack2.Models.OrderViewModel>
+
+<h1>Заказы</h1>
+
+<a class="btn btn-primary" href="@Url.Action("Create", "Order")">Создать</a>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Дата
+            </th>
+            <th>
+                Стоимость
+            </th>
+            <th>
+                Статус
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @item.OrderDate
+                </td>
+                <td>
+                    @item.Price
+                </td>
+                <td>
+                    @item.Status
+                </td>
+                <td>
+                    <button class="btn btn-danger" onclick="showDeleteModal(@item.Id)">Удалить</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <script>
+        var deleteProductId = 0;
+
+        function showDeleteModal(id) {
+            deleteProductId = id;
+            $('#deleteModal').modal('show');
+        }
+
+        $('#confirmDeleteBtn').click(function () {
+            $.post('@Url.Action("DeleteConfirmed", "Product")', { id: deleteProductId }, function (response) {
+                if (response.success) {
+                    location.reload();
+                } else {
+                    $('#deleteModal').modal('hide');
+                    $('#errorModalBody').text(response.errorMessage);
+                    $('#errorModal').modal('show');
+                }
+            });
+        });
+    </script>
+}

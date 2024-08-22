@@ -1,8 +1,7 @@
 ﻿@model IEnumerable<TradeTrack2.Models.ProductViewModel>
 
 <h1>Products</h1>
-
-<a class="btn" href="@Url.Action("Create", "Product")">Добавить</a>
+<button class="btn btn-primary" id="openCreateModalBtn">Добавить</button>
 <table class="table">
     <thead>
         <tr>
@@ -40,8 +39,41 @@
     </tbody>
 </table>
 
+<!-- Контейнер для динамической загрузки модального окна -->
+<div id="createModalContainer"></div>
+
 @section Scripts {
     <script>
+
+        $(document).ready(function () {
+            // Открытие модального окна для создания продукта
+            $('#openCreateModalBtn').click(function () {
+                $.get('@Url.Action("LoadCreateModal", "Product")', function (data) {
+                    $('#createModalContainer').html(data);
+                    $('#createModal').modal('show');
+
+                    // Теперь инициализируем скрипты для загруженного модального окна
+                    initializeCreateProductForm();
+                });
+            });
+        });
+
+        // Функция для инициализации формы после загрузки модального окна
+        function initializeCreateProductForm() {
+            $('#createProductBtn').click(function () {
+                var formData = $('#createProductForm').serialize();
+
+                $.post('@Url.Action("Create", "Product")', formData, function (response) {
+                    if (response.success) {
+                        location.reload(); // Обновляем страницу после успешного добавления
+                    } else {
+                        // Обработка ошибок
+                        alert(response.errorMessage);
+                    }
+                });
+            });
+        }
+
         var deleteProductId = 0;
 
         function showDeleteModal(id) {

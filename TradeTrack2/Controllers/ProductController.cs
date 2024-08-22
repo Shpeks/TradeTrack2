@@ -28,9 +28,10 @@ namespace TradeTrack2.Controllers
         }
 
         [HttpGet]
-        public IActionResult Create()
+        public IActionResult LoadCreateModal()
         {
-            return View();
+            var model = new ProductViewModel();
+            return PartialView("_CreateModal", model);
         }
 
         [HttpPost]
